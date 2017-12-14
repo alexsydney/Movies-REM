@@ -1,5 +1,73 @@
 ## README
 
+* Recap
+
+  * Presentation from Ric using Local Storage `getItem` and `setItem` to store and retrieve the JWT - https://developer.mozilla.org/en-US/docs/Web/API/Storage/LocalStorage
+  * Demo
+    ```
+    window.localStorage.setItem('token', 'abc');
+    window.localStorage.getItem('token');
+    ```
+  * Show location of Local Storage in browser
+    * Chrome Inspector > Application > Storage > Local Storage
+
+* Intro
+
+  * **Jest Test Runner** (alternative is Mocha) that grabs the test files and associated configuration and then executes them and writes test results to console
+  
+  * Expectation vs Actual - Matchers to check proper values returned
+
+  * **Mocking Objects Types (aka Test Doubles)** are used for Asyncronous calls
+    * Dummy objects - passed around but not actually used other than to fill parameter lists.
+    * Fake objects - simplified implementation, not suitable for production (with same interface as real object being mocked), used to avoid side-effects caused by using real objects
+    * Stubs - predefined answers to test calls
+    * Spies (enhanced Stub) - record how SUT makes calls to check performing correctly
+      * Replace Mocked class Methods with Spy Methods
+      * Add Spy Methods replace actual function and **Intercept** calls to Real freestanding (i.e. callback) functions. **Pass-Through Mocking** passes Context and Original Function through as parameters
+      * Spies track quantity of times called and parameters provided  
+    * Mock - 
+      * Pre-programmed specification of calls expected to receive
+      * Verification checks that mocks receive all expected calls
+      * Throws exceptions if method receives unexpected calls
+
+    * Reference: 
+      * Test Double - https://martinfowler.com/bliki/TestDouble.html
+      * Luke's blogpost - https://ltfschoen.github.io/JavaScript-Tests-Mocha-Mocking-Spies/
+
+  * **Mocking Benefits** 
+    * Test component isolated from System Under Test (SUT)(i.e. remove costs of interaction with external complex systems)
+    * Test interactions between Components
+
+  * Demo 
+    * Jasmine Spies and Matchers - https://jasmine.github.io/2.0/introduction.html
+
+  * Libraries
+    * Sinon.js is Mocking library (NOT a test framework). It provides Spies, Stubs, Mocks (for any test framework)
+      * Sinon.js - http://sinonjs.org/
+      * Sinon Spy API - http://sinonjs.org/releases/v2.0.0/spies/
+      * Sinon Call API
+      * Sinon Assertion API
+      * Sinon Stub API `sinon.stub`
+      * Sinon Mock `sinon.mock`
+        * Sinon Mocks (third form of Test Double provided by SinonJS, similar to Sinon Stubs but have pre-programmed expectations)
+      * Sinon Matchers API
+        * Matching calls to a Test Double based on args used (without exactly specifying the args). Use them in place of an arg to check if Test Double called correctly
+        * Example usage: Create spy, call the spy, and call `sinon.spy().calledWithMatch(sinon.match.number)` method on the spy (passing in one or more Matchers)
+      * Sinon Fake Timers (similar to Jasmine's Mock clock). `sinon-ie` is required when working with IE
+      * Sinon Fake XMLHttpRequest (Test Double) - controls XHR Object in browser but not all requests will receive a response.
+        * Option 1 - `useFakeXmlHttpRequest`
+        * Option 2 - `fakeServer` API for hijacking XHR object in browser by seting up a pattern for responses to allow inspection of specific requests/responses
+      * FakeXMLHttpRequest API
+      * FakeXMLHttpRequest Response API
+      * Sandboxing
+        * Post-testing to ensure global objects restored to original state, including:
+          * Spies, Stubs, Mocks, Fake Timers, Fake XHRs
+        * Implement Sandboxing with either
+          * Option 1: `sinon.sandbox.create`
+          * Option 2: `sinon.test()`
+    * Jasmine BDD framework - https://jasmine.github.io/ 
+    * Chimp.js (normally QA teams do this) - https://chimp.readme.io/
+
 * About
 
   * Debugging
@@ -51,6 +119,8 @@
       yarn test
       ```
 
+  * Create a new branch to experiment with tests `git checkout -b branch-name`
+
 * Jest Usage
   * Reference: https://github.com/ltfschoen/Movies-REM/blob/master/react-web/README.md#running-tests
 
@@ -87,7 +157,7 @@
   * Initialise Test Environment
     * Reference: https://github.com/ltfschoen/Movies-REM/blob/master/react-web/README.md#initializing-test-environment
 
-    * Create `src/setupTests.js` as it will automatically run before running tests
+    * Create `src/setupTests.js` as it will automatically run before running tests. Configure Enzyme to use the Adapter
     
       ```
       import { configure } from 'enzyme';
@@ -102,6 +172,8 @@
       };
       global.localStorage = localStorageMock;
       ```
+
+    * Shallow Rendering with Enzyme - http://airbnb.io/enzyme/#shallow-rendering
 
     * Change App.test.js to:
       ```
@@ -118,15 +190,7 @@
       * Global setup before running tests
       * If requirement to Mock an API 
 
-  * Configure Enzyme to use the Adapter
-    ```
-    import Enzyme from 'enzyme';
-    import Adapter from 'enzyme-adapter-react-16';
-
-    Enzyme.configure({ adapter: new Adapter() });
-    ```
-
-* Basic Jest "smoke test"
+* Basic Jest "smoke test" - https://github.com/ltfschoen/Movies-REM/blob/master/react-web/README.md#srcsetuptestsjs
 
   * In-built with create-react-app to test component renders without throwing during rendering
   * Open src > components > App.test.js
@@ -253,13 +317,30 @@
       * Error not resolved, still get error `console.log src/api/movies.js:7 TypeError: res.json is not a function`
       * Additional error: `Expected one assertion to be called but only received zero assertion calls.`
   
+  * Add Chai
+    ```
+    yarn add chai sinon --dev
+    ```
+    * Usage
+      ```
+      import { assert } from 'chai';
+      import { spy } from 'sinon';
+      ```
+    * Reference: 
+      * https://medium.com/kevin-salters-blog/testing-react-with-enzyme-fbfc30190e70
+      * http://airbnb.io/enzyme/docs/api/ReactWrapper/find.html
+
+  * Debugging tests: `console.log( wrapper.debug() )`
+
 * Challenges
   * Fix the error by implementing the Jest Mock Function API - https://facebook.github.io/jest/docs/en/mock-function-api.html
   * Run tests with Coverage Reporting
     * Reference - https://github.com/ltfschoen/Movies-REM/blob/master/react-web/README.md#coverage-reporting
-  * Jest for shallow rendering and testing the output
-  * Jest for full rendering, testing component lifecycle and state changes
-  * Jest Snapshots experimentation
-  * Setup Travis CI Configuration 
+
+* Homework
+  * Read about using Jest for shallow rendering and testing the output
+  * Read about using Jest for full rendering, testing component lifecycle and state changes
+  * Try experimenting with Jest Snapshots between your Git commits
+  * Trying setting up Travis CI Configuration with your Jest tests
     * Reference - https://github.com/ltfschoen/Movies-REM/blob/master/react-web/README.md#on-ci-servers
 
