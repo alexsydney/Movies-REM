@@ -148,6 +148,8 @@
 * Enzyme Usage:
   * Reference:
     * Enzyme - http://airbnb.io/enzyme/
+    * Enzyme Shallow Rendering - http://airbnb.io/enzyme/docs/api/shallow.html
+    * Enzyme Full DOM Rendering - http://airbnb.io/enzyme/docs/api/mount.html
 
   * Installation
     ```

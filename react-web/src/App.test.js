@@ -34,7 +34,7 @@ describe("Movie component with API call", function () {
   });
 
   it('should show the <MoviesList /> component when it has loaded movies', () => {
-    const wrapper = shallow(<App />);
+    const wrapper = mount(<App />);
     wrapper.setState({movies: [ { title: 'Around the Block', yearReleased: 2018 } ]});
     const moviesListComponent = wrapper.find('MoviesList');
     // console.log( wrapper.debug() )
@@ -53,9 +53,10 @@ describe("Movie component with API call", function () {
   });
 
   // Assertion for a promise must be returned.
-  it('works with promises on mock functions', () => {
+  xit('works with promises on mock functions', () => {
+    const wrapper = mount(<App />);
     expect.assertions(1);
-    return App.getMovies().then(data => expect(data.token).toEqual('mytoken'));
+    return wrapper.getMovies().then(data => expect(data.token).toEqual('mytoken'));
   });
 });
 

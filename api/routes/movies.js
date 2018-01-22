@@ -1,19 +1,20 @@
 const express = require('express');
 const Movie = require('../models/movie');
 const Person = require('../models/person');
+const authMiddleware =require('../middleware/auth');
 
 const router = express.Router();
 
-const authorize = (req, res, next) => {
-  next(); return;
-  if (req.user) {
-    next();
-  } else {
-    res.status(403).end();
-  }
-}
+// const authorize = (req, res, next) => {
+//   next(); return;
+//   if (req.user) {
+//     next();
+//   } else {
+//     res.status(403).end();
+//   }
+// }
 
-router.get('/', authorize, (req, res) => {
+router.get('/', authMiddleware.requireJWT, (req, res) => {
   Movie.find()
     .populate('director')
     .populate('crew.person')
@@ -23,7 +24,7 @@ router.get('/', authorize, (req, res) => {
     .catch(error => res.json({ error }))
 });
 
-router.post('/', (req, res) => {
+router.post('/', authMiddleware.requireJWT, (req, res) => {
   Movie.create(req.body)
     .then((movie) => {
       res.status(201).json(movie).end();
